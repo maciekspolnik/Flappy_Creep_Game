@@ -1,5 +1,5 @@
 public class TestClass {
     public static void main(String[] args) {
-        System.out.println("Test Mavena");
+        System.out.println("Test: Kompilator Mavena");
     }
 }
