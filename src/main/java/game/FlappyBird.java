@@ -85,6 +85,17 @@ public class FlappyBird implements ActionListener {
             yMotion += 2;
         }
 
+        for (int i=0; i < columns.size();i++){
+            Rectangle column = columns.get(i);
+
+            if(column.x + column.width<0){
+                columns.remove(column);
+                if(column.y==0){
+                    addColumn(false);
+                }
+            }
+        }
+
         bird.y += yMotion;
         renderer.repaint();
 
