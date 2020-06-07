@@ -19,9 +19,9 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
 
     public ArrayList<Rectangle> pipes;
 
-    public int timerTick, yMove, score;
+    public int timerTick, yMove, score, finalScore = 0;
 
-    public boolean gameOver, started;
+    public boolean gameOver, started, begining = true;
 
     public Random rand;
 
@@ -43,11 +43,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
         jframe.setVisible(true);
 
         bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
-        pipes = new ArrayList<Rectangle>();
+        pipes = new ArrayList<>();
 
-        for(int i = 0; i<4;i++){
+        for(int i = 0; i < 4; i++){
             addPipe(true);
-
         }
 
         timer.start();
@@ -86,7 +85,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
             yMove = 0;
             score = 0;
 
-            for(int i = 0; i<4;i++){
+            for(int i = 0; i<4; i++){
                 addPipe(true);
 
             }
@@ -145,7 +144,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
 
             for (Rectangle pipe : pipes)
             {
-                if (pipe.y == 0 && bird.x + bird.width / 2 > pipe.x + pipe.width / 2 - 10 && bird.x + bird.width / 2 < pipe.x + pipe.width / 2 + 10)
+                if (pipe.y == 0 && bird.x + bird.width / 2 > pipe.x + pipe.width / 2 - 10 && bird.x + bird.width / 2 < pipe.x + pipe.width / 2 + 10 && !gameOver)
                 {
                     score++;
                 }
@@ -154,78 +153,91 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
                 {
                     gameOver = true;
 
+
                     if (bird.x <= pipe.x)
                     {
                         bird.x = pipe.x - bird.width;
 
                     }
-                    else
-                    {
-                        if (pipe.y != 0)
+                    else if (pipe.y != 0)
                         {
                             bird.y = pipe.y - bird.height;
                         }
-                        else if (bird.y < pipe.height)
+                    else if (bird.y < pipe.height)
                         {
                             bird.y = pipe.height;
                         }
-                    }
+                }
+                else if (bird.y > HEIGHT - 120 || bird.y < 0)
+                {
+                    gameOver = true;
+                    //System.out.println("Przecięcie");
+                }
+                else if (bird.y + yMove >= HEIGHT - 120)
+                {
+                    bird.y = HEIGHT - 120 - bird.height;
+                    gameOver = true;
+
+                }
+                finalScore = score;
                 }
             }
 
-            if (bird.y > HEIGHT - 120 || bird.y < 0)
-            {
-                gameOver = true;
-            }
 
-            if (bird.y + yMove >= HEIGHT - 120)
-            {
-                bird.y = HEIGHT - 120 - bird.height;
-                gameOver = true;
-            }
-        }
+
+
+
 
         renderer.repaint();
     }
 
-    public void refresh(Graphics g)
-    {
+    public void refresh(Graphics g) {
+
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        g.setColor(Color.orange);
-        g.fillRect(0, HEIGHT - 120, WIDTH, 120);
-
-        g.setColor(Color.green.darker());
-        g.fillRect(0, HEIGHT - 120, WIDTH, 20);
-
-        g.setColor(Color.blue);
-        g.fillRect(bird.x, bird.y, bird.width, bird.height);
-
-        for (Rectangle pipe : pipes)
-        {
-            drawPipe(g, pipe);
-        }
-
-        g.setColor(Color.white);
-        g.setFont(new Font("Arial", Font.PLAIN, 100));
-
-        if (!started)
-        {
-            g.drawString("Click to start!", 75, HEIGHT / 2 - 50);
-        }
-
-        if (gameOver)
-        {
-            g.drawString("Game Over!", 100, HEIGHT / 2 - 50);
+        if (begining) {
+            g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.PLAIN, 50));
-            g.drawString("Click to play again",150,HEIGHT / 2 + 50);
-            g.setFont(new Font("Arial", Font.PLAIN, 100));
-        }
+            g.drawString("Welcome to our Flappy Bird!", 75, HEIGHT / 2 - 150);
 
-        if (!gameOver && started)
-        {
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+            g.setColor(Color.red.darker());
+            g.fillRect(300,350,200,100);
+            g.setColor(Color.green.darker());
+            g.fillRect(300,500,200,100);
+        }
+        else {
+
+
+            g.setColor(Color.orange);
+            g.fillRect(0, HEIGHT - 120, WIDTH, 120);
+
+            g.setColor(Color.green.darker());
+            g.fillRect(0, HEIGHT - 120, WIDTH, 20);
+
+            g.setColor(Color.blue);
+            g.fillRect(bird.x, bird.y, bird.width, bird.height);
+
+            for (Rectangle pipe : pipes) {
+                drawPipe(g, pipe);
+            }
+            g.setFont(new Font("Arial", Font.PLAIN, 100));
+            g.setColor(Color.white);
+
+            if (!started) {
+                g.drawString("Click to start!", 75, HEIGHT / 2 - 50);
+            }
+
+            if (gameOver) {
+                g.drawString("Game Over!", 100, HEIGHT / 2 - 50);
+                g.setFont(new Font("Arial", Font.PLAIN, 50));
+                g.drawString("Your score: " + finalScore, 200, HEIGHT / 2 + 50);
+                g.setFont(new Font("Arial", Font.PLAIN, 100));
+            }
+
+            if (!gameOver && started) {
+                g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+            }
         }
     }
 
@@ -235,9 +247,21 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
     }
 
     @Override
-    public void mouseClicked(MouseEvent e)
-    {
-        jump();
+    public void mouseClicked(MouseEvent e){
+        Point coords = e.getLocationOnScreen();
+
+        if(!begining) {
+            jump();
+        }
+        else if(coords.x < 500 && coords.x > 300 && coords.y < 450 && coords.y > 350) {
+            // Użyj Layoutu 1
+            begining = false;
+        }
+        else if(coords.x < 500 && coords.x > 300 && coords.y > 500 && coords.y < 600) {
+            // Użyj Layoutu 2
+            begining = false;
+        }
+
     }
 
     @Override
