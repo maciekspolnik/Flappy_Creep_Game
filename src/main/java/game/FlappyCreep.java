@@ -11,6 +11,7 @@ import javax.swing.Timer;
 public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
     public static FlappyCreep flappyCreep;
     public final int WIDTH = 800, HEIGHT = 800, MAPHEIGHTMAX = 675, MAPHEIGHTMIN = 0;
+    public final int PLAYERWIDTH =25, PLAYERHEIGHT=25;
     public Renderer renderer;
     public Rectangle player;
     public ArrayList<Rectangle> pipes;
@@ -31,7 +32,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         timer.start();
     }
     public void initialize(){
-        player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+        player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, PLAYERWIDTH, PLAYERHEIGHT);
         pipes = new ArrayList<Rectangle>();
 
         for(int i = 0; i<4;i++){
@@ -48,7 +49,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         jframe.setSize(WIDTH, HEIGHT);
         jframe.addMouseListener(this);
         jframe.addKeyListener(this);
-        jframe.setResizable(false);
+        jframe.setResizable(true);
         jframe.setVisible(true);
     }
     public void layout(int num){
@@ -57,14 +58,14 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             gamePlayer = la1Player;
             gameGround = la1Ground;
             gamePipe = la1Pipe;
-            gameMenu =la1Menu;
+            gameMenu = la1Menu;
         }
         else if(num==0){
             gameBackground = la2Background;
             gamePlayer = la2Player;
             gameGround = la2Ground;
             gamePipe = la2Pipe;
-            gameMenu =la2Menu;
+            gameMenu = la2Menu;
         }
     }
 
@@ -75,6 +76,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftTitle.ttf")));
         }
         catch(IOException | FontFormatException e){
+            System.exit(1);
         }
 
         try{
@@ -83,6 +85,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")));
         }
         catch(IOException | FontFormatException e){
+            System.exit(1);
         }
 
         try{
@@ -91,17 +94,18 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")));
         }
         catch(IOException | FontFormatException e){
+            System.exit(1);
         }
-        la1Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\layer.png").getImage();
-        la1Background = new ImageIcon(".\\src\\main\\java\\game\\img\\background.jpg").getImage();
+        la1Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\dirt.jpg").getImage();
+        la1Background = new ImageIcon(".\\src\\main\\java\\game\\img\\back.png").getImage();
         la1Player = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
-        la1Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\lava.gif").getImage();
+        la1Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\wood.jpg").getImage();
         la1Menu = new ImageIcon(".\\src\\main\\java\\game\\img\\menu_background.png").getImage();
 
-        la2Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
-        la2Background = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\nether_brick.jpg").getImage();
+        la2Background = new ImageIcon(".\\src\\main\\java\\game\\img\\nether1.jpg").getImage();
         la2Player = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
-        la2Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\lava.gif").getImage();
         la2Menu = new ImageIcon(".\\src\\main\\java\\game\\img\\nether_background.png").getImage();
 
         menuButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button.png").getImage();
@@ -109,9 +113,9 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
     }
 
     public void addPipe(boolean start){
-        int space = 300;
+        int space = 350;
         int width = 100;
-        int height = 50 + rand.nextInt(300);
+        int height = 50 + rand.nextInt(350);
 
         if (start){
             pipes.add(new Rectangle(WIDTH + width + pipes.size() * 300, MAPHEIGHTMAX - height, width, height));
@@ -130,7 +134,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
     public void jump(){
         if (gameOver){
-            player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+            player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, PLAYERWIDTH, PLAYERHEIGHT);
             pipes.clear();
             yMove = 0;
             score = 0;
@@ -181,17 +185,15 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             player.y += yMove;
 
             for (Rectangle pipe : pipes){
-                if (pipe.y == 0 && player.x + player.width / 2 > pipe.x + pipe.width / 2 - 10 && player.x + player.width / 2 < pipe.x + pipe.width / 2 + 10 && !gameOver){
+                if (pipe.y == 0 && player.x + player.width / 2 > pipe.x + pipe.width / 2 -7 && player.x + player.width / 2 < pipe.x + pipe.width / 2 + 7 && !gameOver){
                     score++;
                 }
 
                 if (pipe.intersects(player)){
                     gameOver = true;
 
-
                     if (player.x <= pipe.x){
                         player.x = pipe.x - player.width;
-
                     }
                     else if (pipe.y != 0){
                         player.y = pipe.y - player.height;
@@ -206,7 +208,6 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
                 else if (player.y + yMove >= MAPHEIGHTMAX){
                     player.y = MAPHEIGHTMAX - player.height;
                     gameOver = true;
-
                 }
                 finalScore = score;
             }
@@ -215,30 +216,24 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
     }
 
     public void refresh(Graphics g){
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
         if (begining) {
-            if(layout==1){
-                g.drawImage(la1Menu, 0, 0,800,800, null);
-            }
-            else{
-                g.drawImage(la2Menu, 0, 0,800,800, null);
-            }
-            g.setColor(Color.WHITE);
+            g.drawImage(gameMenu, 0, 0,WIDTH,HEIGHT, null);
+
+            g.setColor(Color.GRAY);
             g.setFont(minecraftTitleFont);
             g.drawString("Flappy Craft!", 100, HEIGHT / 2 - 150);
 
-            g.drawImage(menuButton, 150, 400,500,60, null);
+            g.setColor(Color.WHITE);
             g.setFont(minecraftNormalFont);
+            g.drawImage(menuButton, 150, 400,500,60, null);
             g.drawString("Start Game", 300, 444);
-
             g.drawImage(menuButtonSmall, 150, 500,240,60, null);
             g.drawString("Layout", 210, 544);
             g.drawImage(menuButtonSmall, 410, 500,240,60, null);
             g.drawString("Quit", 500, 544);
         }
         else{
-            g.drawImage(gameBackground, 0, 0,800,MAPHEIGHTMAX, null);
+            g.drawImage(gameBackground, 0, 0,WIDTH,MAPHEIGHTMAX, null);
             g.drawImage(gameGround, 0, MAPHEIGHTMAX,800,HEIGHT-MAPHEIGHTMAX, null);
             g.drawImage(gamePlayer, player.x, player.y, player.width, player.height, null);
 
@@ -336,6 +331,10 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         if (e.getKeyCode() == KeyEvent.VK_L){
             layout ^= 1;
             layout(layout);
+        }
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+        {
+            System.exit(0);
         }
     }
 }
