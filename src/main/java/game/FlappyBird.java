@@ -18,7 +18,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
     public boolean gameOver, started, begining = true;
     public Random rand;
     public Font minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
-    public Image gameBackgroud, gamePlayer, gameGround, gamePipe, layer, skeleton, lava, creeper, background;
+    public Image gameBackgroud, gamePlayer, gameGround, gamePipe, layer, skeleton, lava, creeper, background, MenuBackgroud, menuButton, menuButtonSamll;
 
     JFrame jframe = new JFrame();
     Timer timer = new Timer(20, this);
@@ -83,6 +83,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         creeper = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
         lava = new ImageIcon(".\\src\\main\\java\\game\\img\\lava.gif").getImage();
         skeleton = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        MenuBackgroud = new ImageIcon(".\\src\\main\\java\\game\\img\\menu_background.png").getImage();
+
+        menuButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button.png").getImage();
+        menuButtonSamll = new ImageIcon(".\\src\\main\\java\\game\\img\\button-small.png").getImage();
     }
 
     public void addPipe(boolean start){
@@ -196,14 +200,19 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         if (begining) {
+            g.drawImage(MenuBackgroud, 0, 0,800,800, null);
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.PLAIN, 50));
-            g.drawString("Welcome to our Flappy Bird!", 75, HEIGHT / 2 - 150);
+            g.setFont(minecraftTitleFont);
+            g.drawString("Flappy Craft!", 100, HEIGHT / 2 - 150);
 
-            g.setColor(Color.red.darker());
-            g.fillRect(300,350,200,100);
-            g.setColor(Color.green.darker());
-            g.fillRect(300,500,200,100);
+            //g.setColor(Color.red.darker());
+            g.drawImage(menuButton, 150, 400,500,60, null);
+            //g.fillRect(300,350,200,100);
+
+            g.drawImage(menuButtonSamll, 150, 500,240,60, null);
+            g.drawImage(menuButtonSamll, 410, 500,240,60, null);
+            //g.setColor(Color.green.darker());
+            //g.fillRect(300,500,200,100);
         }
         else{
             g.drawImage(background, 0, 0,800,MAPHEIGHTMAX, null);
