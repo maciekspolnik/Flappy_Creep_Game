@@ -333,5 +333,9 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         if (e.getKeyCode() == KeyEvent.VK_SPACE){
             jump();
         }
+        if (e.getKeyCode() == KeyEvent.VK_L){
+            layout ^= 1;
+            layout(layout);
+        }
     }
 }
