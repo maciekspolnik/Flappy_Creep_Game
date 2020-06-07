@@ -2,34 +2,48 @@ package game;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.Timer;
 
 public class FlappyBird implements ActionListener, MouseListener, KeyListener
 {
 
     public static FlappyBird flappyBird;
-
-    public final int WIDTH = 800, HEIGHT = 800;
-
+    public final int WIDTH = 800, HEIGHT = 800, MAPHEIGHTMAX = 675, MAPHEIGHTMIN = 0;
     public Renderer renderer;
-
     public Rectangle bird;
-
     public ArrayList<Rectangle> pipes;
-
     public int timerTick, yMove, score;
-
     public boolean gameOver, started;
-
     public Random rand;
+    public Font minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
+    public Image layer, backgraund;
 
+    JFrame jframe = new JFrame();
+    Timer timer = new Timer(20, this);
     public FlappyBird()
     {
-        JFrame jframe = new JFrame();
-        Timer timer = new Timer(20, this);
 
+        loadFiles();
+        gameSettings();
+        initialize();
+
+        timer.start();
+    }
+
+    public void initialize(){
+        bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+        pipes = new ArrayList<Rectangle>();
+
+        for(int i = 0; i<4;i++){
+            addPipe(true);
+        }
+    }
+
+    public void gameSettings(){
         renderer = new Renderer();
         rand = new Random();
 
@@ -41,16 +55,36 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
         jframe.addKeyListener(this);
         jframe.setResizable(false);
         jframe.setVisible(true);
+    }
 
-        bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
-        pipes = new ArrayList<Rectangle>();
-
-        for(int i = 0; i<4;i++){
-            addPipe(true);
-
+    public void loadFiles(){
+        try{
+            minecraftTitleFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftTitle.ttf")).deriveFont(75f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftTitle.ttf")));
+        }
+        catch(IOException | FontFormatException e){
         }
 
-        timer.start();
+        try{
+            minecraftNormalFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(35f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")));
+        }
+        catch(IOException | FontFormatException e){
+        }
+
+        try{
+            MinecraftScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(50f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")));
+        }
+        catch(IOException | FontFormatException e){
+        }
+
+        layer = new ImageIcon(".\\src\\main\\java\\game\\img\\layer.png").getImage();
+        backgraund = new ImageIcon(".\\src\\main\\java\\game\\img\\background.jpg").getImage();
+
     }
 
     public void addPipe(boolean start)
@@ -61,12 +95,12 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
 
         if (start)
         {
-            pipes.add(new Rectangle(WIDTH + width + pipes.size() * 300, HEIGHT - height - 120, width, height));
+            pipes.add(new Rectangle(WIDTH + width + pipes.size() * 300, MAPHEIGHTMAX - height, width, height));
             pipes.add(new Rectangle(WIDTH + width + (pipes.size() - 1) * 300, 0, width, HEIGHT - height - space));
         }
         else
         {
-            pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x + 600, HEIGHT - height - 120, width, height));
+            pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x + 600, MAPHEIGHTMAX - height, width, height));
             pipes.add(new Rectangle(pipes.get(pipes.size() - 1).x, 0, width, HEIGHT - height - space));
         }
     }
@@ -75,6 +109,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
     {
         g.setColor(Color.green.darker());
         g.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+
     }
 
     public void jump()
@@ -99,11 +134,9 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
             started = true;
         }
         else {
-            if (yMove > 0)
-            {
+            if (yMove > 0){
                 yMove = 0;
             }
-
             yMove -= 10;
         }
     }
@@ -173,14 +206,14 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
                 }
             }
 
-            if (bird.y > HEIGHT - 120 || bird.y < 0)
+            if (bird.y > MAPHEIGHTMAX || bird.y < 0)
             {
                 gameOver = true;
             }
 
-            if (bird.y + yMove >= HEIGHT - 120)
+            if (bird.y + yMove >= MAPHEIGHTMAX)
             {
-                bird.y = HEIGHT - 120 - bird.height;
+                bird.y = MAPHEIGHTMAX - bird.height;
                 gameOver = true;
             }
         }
@@ -190,14 +223,8 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
 
     public void refresh(Graphics g)
     {
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
-
-        g.setColor(Color.orange);
-        g.fillRect(0, HEIGHT - 120, WIDTH, 120);
-
-        g.setColor(Color.green.darker());
-        g.fillRect(0, HEIGHT - 120, WIDTH, 20);
+        g.drawImage(backgraund, 0, 0,800,MAPHEIGHTMAX, null);
+        g.drawImage(layer, 0, MAPHEIGHTMAX,800,HEIGHT-MAPHEIGHTMAX, null);
 
         g.setColor(Color.blue);
         g.fillRect(bird.x, bird.y, bird.width, bird.height);
@@ -208,24 +235,27 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener
         }
 
         g.setColor(Color.white);
-        g.setFont(new Font("Arial", Font.PLAIN, 100));
 
         if (!started)
         {
+            g.setFont(minecraftTitleFont);
             g.drawString("Click to start!", 75, HEIGHT / 2 - 50);
         }
 
         if (gameOver)
         {
+            g.setFont(minecraftTitleFont);
             g.drawString("Game Over!", 100, HEIGHT / 2 - 50);
-            g.setFont(new Font("Arial", Font.PLAIN, 50));
+            g.setFont(minecraftNormalFont);
             g.drawString("Click to play again",150,HEIGHT / 2 + 50);
-            g.setFont(new Font("Arial", Font.PLAIN, 100));
         }
 
         if (!gameOver && started)
         {
-            g.drawString(String.valueOf(score), WIDTH / 2 - 25, 100);
+            g.setFont(minecraftNormalFont);
+            g.drawString("Score", 25, 710);
+            g.setFont(MinecraftScoreFont);
+            g.drawString(String.valueOf(score), 65, 750);
         }
     }
 
