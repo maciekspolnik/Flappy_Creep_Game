@@ -16,7 +16,9 @@ class Test extends Frame {
             myImage = Toolkit.getDefaultToolkit().getImage(".\\src\\main\\java\\game\\img\\background1.jpg");
         }
         catch(Exception e) {}
+
         setSize(800,600);
+
         setVisible(true);
         moveImage();
 
@@ -53,7 +55,7 @@ class Test extends Frame {
 
             System.out.println("next set of Pixels " + xPixel);
 
-            xPixel -=1;
+            xPixel -=1 ;
             repaint();
 
             // then sleep for a bit for your animation

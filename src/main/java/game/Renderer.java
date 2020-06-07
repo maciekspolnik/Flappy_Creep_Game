@@ -10,6 +10,6 @@ public class Renderer extends JPanel {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        FlappyBird.flappyBird.refresh(g);
+        FlappyCreep.flappyCreep.refresh(g);
     }
 }

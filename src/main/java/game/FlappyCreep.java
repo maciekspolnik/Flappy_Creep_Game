@@ -8,30 +8,30 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
-public class FlappyBird implements ActionListener, MouseListener, KeyListener{
-    public static FlappyBird flappyBird;
+public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
+    public static FlappyCreep flappyCreep;
     public final int WIDTH = 800, HEIGHT = 800, MAPHEIGHTMAX = 675, MAPHEIGHTMIN = 0;
     public Renderer renderer;
-    public Rectangle bird;
+    public Rectangle player;
     public ArrayList<Rectangle> pipes;
-    public int timerTick, yMove, score, finalScore = 0;
+    public int timerTick, yMove, score, finalScore = 0, layout=1;
     public boolean gameOver, started, begining = true;
     public Random rand;
     public Font minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
-    public Image gameBackgroud, gamePlayer, gameGround, gamePipe, layer, skeleton, lava, creeper, background, MenuBackgroud, menuButton, menuButtonSamll;
+    public Image gameBackground, gamePlayer, gameGround, gamePipe, gameMenu, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu, menuButton, menuButtonSmall;
 
     JFrame jframe = new JFrame();
     Timer timer = new Timer(20, this);
 
-    public FlappyBird(){
+    public FlappyCreep(){
         loadFiles();
         gameSettings();
         initialize();
-
+        layout(layout);
         timer.start();
     }
     public void initialize(){
-        bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+        player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
         pipes = new ArrayList<Rectangle>();
 
         for(int i = 0; i<4;i++){
@@ -43,7 +43,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         renderer = new Renderer();
         rand = new Random();
         jframe.add(renderer);
-        jframe.setTitle("Flappy Bird");
+        jframe.setTitle("Flappy Creep");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.setSize(WIDTH, HEIGHT);
         jframe.addMouseListener(this);
@@ -52,6 +52,20 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         jframe.setVisible(true);
     }
     public void layout(int num){
+        if(num==1) {
+            gameBackground = la1Background;
+            gamePlayer = la1Player;
+            gameGround = la1Ground;
+            gamePipe = la1Pipe;
+            gameMenu =la1Menu;
+        }
+        else if(num==0){
+            gameBackground = la2Background;
+            gamePlayer = la2Player;
+            gameGround = la2Ground;
+            gamePipe = la2Pipe;
+            gameMenu =la2Menu;
+        }
     }
 
     public void loadFiles(){
@@ -78,15 +92,20 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         }
         catch(IOException | FontFormatException e){
         }
-        layer = new ImageIcon(".\\src\\main\\java\\game\\img\\layer.png").getImage();
-        background = new ImageIcon(".\\src\\main\\java\\game\\img\\background.jpg").getImage();
-        creeper = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
-        lava = new ImageIcon(".\\src\\main\\java\\game\\img\\lava.gif").getImage();
-        skeleton = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
-        MenuBackgroud = new ImageIcon(".\\src\\main\\java\\game\\img\\menu_background.png").getImage();
+        la1Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\layer.png").getImage();
+        la1Background = new ImageIcon(".\\src\\main\\java\\game\\img\\background.jpg").getImage();
+        la1Player = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
+        la1Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\lava.gif").getImage();
+        la1Menu = new ImageIcon(".\\src\\main\\java\\game\\img\\menu_background.png").getImage();
+
+        la2Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Background = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Player = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Pipe = new ImageIcon(".\\src\\main\\java\\game\\img\\wither-skeleton.png").getImage();
+        la2Menu = new ImageIcon(".\\src\\main\\java\\game\\img\\nether_background.png").getImage();
 
         menuButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button.png").getImage();
-        menuButtonSamll = new ImageIcon(".\\src\\main\\java\\game\\img\\button-small.png").getImage();
+        menuButtonSmall = new ImageIcon(".\\src\\main\\java\\game\\img\\button-small.png").getImage();
     }
 
     public void addPipe(boolean start){
@@ -106,12 +125,12 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
 
     public void drawPipe(Graphics g, Rectangle pipe){
         g.setColor(Color.black.darker());
-        g.drawImage(lava, pipe.x, pipe.y, pipe.width, pipe.height, Color.BLACK,null);
+        g.drawImage(gamePipe, pipe.x, pipe.y, pipe.width, pipe.height, Color.BLACK,null);
     }
 
     public void jump(){
         if (gameOver){
-            bird = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
+            player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, 20, 20);
             pipes.clear();
             yMove = 0;
             score = 0;
@@ -159,34 +178,33 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
                 }
             }
 
-            bird.y += yMove;
+            player.y += yMove;
 
             for (Rectangle pipe : pipes){
-                if (pipe.y == 0 && bird.x + bird.width / 2 > pipe.x + pipe.width / 2 - 10 && bird.x + bird.width / 2 < pipe.x + pipe.width / 2 + 10 && !gameOver){
+                if (pipe.y == 0 && player.x + player.width / 2 > pipe.x + pipe.width / 2 - 10 && player.x + player.width / 2 < pipe.x + pipe.width / 2 + 10 && !gameOver){
                     score++;
                 }
 
-                if (pipe.intersects(bird)){
+                if (pipe.intersects(player)){
                     gameOver = true;
 
 
-                    if (bird.x <= pipe.x){
-                        bird.x = pipe.x - bird.width;
+                    if (player.x <= pipe.x){
+                        player.x = pipe.x - player.width;
 
                     }
                     else if (pipe.y != 0){
-                        bird.y = pipe.y - bird.height;
+                        player.y = pipe.y - player.height;
                     }
-                    else if (bird.y < pipe.height){
-                        bird.y = pipe.height;
+                    else if (player.y < pipe.height){
+                        player.y = pipe.height;
                     }
                 }
-                else if (bird.y > MAPHEIGHTMAX || bird.y < 0){
+                else if (player.y > MAPHEIGHTMAX || player.y < 0){
                     gameOver = true;
-                    //System.out.println("Przecięcie");
                 }
-                else if (bird.y + yMove >= MAPHEIGHTMAX){
-                    bird.y = MAPHEIGHTMAX - bird.height;
+                else if (player.y + yMove >= MAPHEIGHTMAX){
+                    player.y = MAPHEIGHTMAX - player.height;
                     gameOver = true;
 
                 }
@@ -200,24 +218,29 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         if (begining) {
-            g.drawImage(MenuBackgroud, 0, 0,800,800, null);
+            if(layout==1){
+                g.drawImage(la1Menu, 0, 0,800,800, null);
+            }
+            else{
+                g.drawImage(la2Menu, 0, 0,800,800, null);
+            }
             g.setColor(Color.WHITE);
             g.setFont(minecraftTitleFont);
             g.drawString("Flappy Craft!", 100, HEIGHT / 2 - 150);
 
-            //g.setColor(Color.red.darker());
             g.drawImage(menuButton, 150, 400,500,60, null);
-            //g.fillRect(300,350,200,100);
+            g.setFont(minecraftNormalFont);
+            g.drawString("Start Game", 300, 444);
 
-            g.drawImage(menuButtonSamll, 150, 500,240,60, null);
-            g.drawImage(menuButtonSamll, 410, 500,240,60, null);
-            //g.setColor(Color.green.darker());
-            //g.fillRect(300,500,200,100);
+            g.drawImage(menuButtonSmall, 150, 500,240,60, null);
+            g.drawString("Layout", 210, 544);
+            g.drawImage(menuButtonSmall, 410, 500,240,60, null);
+            g.drawString("Quit", 500, 544);
         }
         else{
-            g.drawImage(background, 0, 0,800,MAPHEIGHTMAX, null);
-            g.drawImage(layer, 0, MAPHEIGHTMAX,800,HEIGHT-MAPHEIGHTMAX, null);
-            g.drawImage(creeper, bird.x, bird.y, bird.width, bird.height, null);
+            g.drawImage(gameBackground, 0, 0,800,MAPHEIGHTMAX, null);
+            g.drawImage(gameGround, 0, MAPHEIGHTMAX,800,HEIGHT-MAPHEIGHTMAX, null);
+            g.drawImage(gamePlayer, player.x, player.y, player.width, player.height, null);
 
             for (Rectangle pipe : pipes){
                 drawPipe(g, pipe);
@@ -248,7 +271,7 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
     }
 
     public static void main(String[] args){
-        flappyBird = new FlappyBird();
+        flappyCreep = new FlappyCreep();
     }
 
     @Override
@@ -258,20 +281,20 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
         if(!begining) {
             jump();
         }
-        else if(coords.x < 500 && coords.x > 300 && coords.y < 450 && coords.y > 350) {
-            // Użyj Layoutu 1
+        else if(coords.x < 650 && coords.x > 150 && coords.y > 430 && coords.y < 490) {
+            System.out.println("Górny");
             begining = false;
         }
-        else if(coords.x < 500 && coords.x > 300 && coords.y > 500 && coords.y < 600) {
-            // Użyj Layoutu 2
-            begining = false;
-        }
-    }
 
-    @Override
-    public void keyPressed(KeyEvent e){
-        if (e.getKeyCode() == KeyEvent.VK_SPACE){
-            jump();
+        else if(coords.x < 390 && coords.x > 150 && coords.y > 530 && coords.y < 580) {
+            layout ^= 1;
+            layout(layout);
+            System.out.println("Dolny lewy");
+
+        }
+        else if(coords.x < 650 && coords.x > 410 && coords.y > 530 && coords.y < 580) {
+            System.out.println("Dolny prawy");
+            System.exit(0);
         }
     }
 
@@ -305,4 +328,10 @@ public class FlappyBird implements ActionListener, MouseListener, KeyListener{
     {
     }
 
+    @Override
+    public void keyPressed(KeyEvent e){
+        if (e.getKeyCode() == KeyEvent.VK_SPACE){
+            jump();
+        }
+    }
 }
