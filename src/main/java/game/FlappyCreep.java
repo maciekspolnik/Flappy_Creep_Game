@@ -11,15 +11,15 @@ import javax.swing.Timer;
 public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
     public static FlappyCreep flappyCreep;
     public final int WIDTH = 800, HEIGHT = 800, MAPHEIGHTMAX = 675, MAPHEIGHTMIN = 0;
-    public final int PLAYERWIDTH =25, PLAYERHEIGHT=25;
+    public final int PLAYERWIDTH = 25, PLAYERHEIGHT = 25;
     public Renderer renderer;
     public Rectangle player;
     public ArrayList<Rectangle> pipes;
-    public int timerTick, yMove, score, finalScore = 0, layout=1;
+    public int timerTick, yMove, score, finalScore = 0, layout = 1;
     public boolean gameOver, started, begining = true;
     public Random rand;
-    public Font minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
-    public Image gameBackground, gamePlayer, gameGround, gamePipe, gameMenu, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu, menuButton, menuButtonSmall;
+    public Font minecraftSmallFont, minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
+    public Image gameBackground, gamePlayer, gameGround, gamePipe, gameMenu,menuButton, menuButtonSmall, homeButton, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu;
 
     JFrame jframe = new JFrame();
     Timer timer = new Timer(20, this);
@@ -87,7 +87,14 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         catch(IOException | FontFormatException e){
             System.exit(1);
         }
-
+        try{
+            minecraftSmallFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(20f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")));
+        }
+        catch(IOException | FontFormatException e){
+            System.exit(1);
+        }
         try{
             MinecraftScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(50f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -110,6 +117,8 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
         menuButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button.png").getImage();
         menuButtonSmall = new ImageIcon(".\\src\\main\\java\\game\\img\\button-small.png").getImage();
+        homeButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button-home.png").getImage();
+
     }
 
     public void addPipe(boolean start){
@@ -221,7 +230,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
             g.setColor(Color.GRAY);
             g.setFont(minecraftTitleFont);
-            g.drawString("Flappy Craft!", 100, HEIGHT / 2 - 150);
+            g.drawString("Flappy Creep!", 100, HEIGHT / 2 - 150);
 
             g.setColor(Color.WHITE);
             g.setFont(minecraftNormalFont);
@@ -231,6 +240,10 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             g.drawString("Layout", 210, 544);
             g.drawImage(menuButtonSmall, 410, 500,240,60, null);
             g.drawString("Quit", 500, 544);
+            g.setFont(minecraftSmallFont);
+            g.drawString("FlappyCreep v1.0.0", 20,HEIGHT - 50);
+
+            g.setFont(minecraftNormalFont);
         }
         else{
             g.drawImage(gameBackground, 0, 0,WIDTH,MAPHEIGHTMAX, null);
@@ -250,10 +263,16 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
             if (gameOver){
                 g.setFont(minecraftNormalFont);
-                g.drawString("Game Over!", 100, HEIGHT / 2 - 50);
-                g.drawString("Your score: " + finalScore, 200, HEIGHT / 2 + 50);
+                g.drawString("Game Over!", 300, HEIGHT / 2 - 150);
+                if(finalScore <= 10){
+                    g.drawString("Your score: " + finalScore, 270, HEIGHT / 2 - 50);
+                }
+                else{
+                    g.drawString("Your score: " + finalScore, 265, HEIGHT / 2 - 50);
+                }
                 g.setFont(minecraftNormalFont);
-                g.drawString("Click to play again",350,HEIGHT / 2 + 150);
+                g.drawString("Click to play again",240,HEIGHT / 2 + 50);
+                g.drawImage(homeButton,0, 0, 75, 65, null);
             }
 
             if (!gameOver && started) {
@@ -271,8 +290,16 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
     @Override
     public void mouseClicked(MouseEvent e){
-        Point coords = e.getLocationOnScreen();
-
+        Point coords = e.getPoint();
+        System.out.print(coords.x);
+        System.out.print(' ');
+        System.out.println(coords.y);
+        if(gameOver && coords.x < 80 &&  coords.y < 90){
+            begining = true;
+            started = false;
+            gameOver = false;
+            initialize();
+        }
         if(!begining) {
             jump();
         }
@@ -281,15 +308,15 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
             begining = false;
         }
 
-        else if(coords.x < 390 && coords.x > 150 && coords.y > 530 && coords.y < 580) {
+        else if(coords.x < 390 && coords.x > 160 && coords.y > 530 && coords.y < 590) {
             layout ^= 1;
             layout(layout);
             System.out.println("Dolny lewy");
 
         }
-        else if(coords.x < 650 && coords.x > 410 && coords.y > 530 && coords.y < 580) {
+        else if(coords.x < 650 && coords.x > 420 && coords.y > 540 && coords.y < 590) {
             System.out.println("Dolny prawy");
-            System.exit(0);
+            //System.exit(0);
         }
     }
 
