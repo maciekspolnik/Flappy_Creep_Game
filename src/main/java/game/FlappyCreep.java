@@ -15,14 +15,16 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
     public Renderer renderer;
     public Rectangle player;
     public ArrayList<Rectangle> pipes;
-    public int timerTick, yMove, score, finalScore = 0, layout = 1;
+    public int timerTick, yMove, score, musicPlay = 1, finalScore = 0, layout = 1;
     public boolean gameOver, started, begining = true;
     public Random rand;
     public Font minecraftSmallFont, minecraftTitleFont, minecraftNormalFont, MinecraftScoreFont;
     public Image gameBackground, gamePlayer, gameGround, gamePipe, gameMenu,menuButton, menuButtonSmall, homeButton, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu;
+    public Music music = new Music();
 
     JFrame jframe = new JFrame();
     Timer timer = new Timer(20, this);
+
 
     public FlappyCreep(){
         loadFiles();
@@ -30,11 +32,12 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         initialize();
         layout(layout);
         timer.start();
+
+        music.playMusic();
     }
     public void initialize(){
         player = new Rectangle(WIDTH / 2 - 10, HEIGHT / 2 - 10, PLAYERWIDTH, PLAYERHEIGHT);
         pipes = new ArrayList<Rectangle>();
-
         for(int i = 0; i<4;i++){
             addPipe(true);
         }
@@ -51,6 +54,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
         jframe.addKeyListener(this);
         jframe.setResizable(true);
         jframe.setVisible(true);
+
     }
     public void layout(int num){
         if(num==1) {
@@ -352,12 +356,21 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener{
 
     @Override
     public void keyPressed(KeyEvent e){
-        if (e.getKeyCode() == KeyEvent.VK_SPACE){
+        if(e.getKeyCode() == KeyEvent.VK_SPACE){
             jump();
         }
-        if (e.getKeyCode() == KeyEvent.VK_L){
+        if(e.getKeyCode() == KeyEvent.VK_L){
             layout ^= 1;
             layout(layout);
+        }
+        if(e.getKeyCode() == KeyEvent.VK_M){
+            if(musicPlay == 1){
+                music.pauseMusic();
+            }
+            else{
+                music.resumeMusic();
+            }
+            musicPlay ^= 1;
         }
         if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
         {
