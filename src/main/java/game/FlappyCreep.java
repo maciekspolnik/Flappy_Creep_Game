@@ -28,7 +28,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
         initialize();
         visual.layout(layout);
         timer.start();
-        music.playMusic();
+        //music.playMusic();
     }
     public void initialize(){
         player = new Rectangle(Constants.SIZE / 2 - 10, Constants.SIZE / 2 - 10, Constants.PLAYERSIZE, Constants.PLAYERSIZE);
@@ -49,6 +49,8 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
         jframe.addKeyListener(this);
         jframe.setResizable(true);
         jframe.setVisible(true);
+        music.playMusic();
+
 
     }
 
