@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Visuals {
 
     public Font minecraftTitleFont, minecraftNormalFont, minecraftSmallFont, minecraftScoreFont;
-    public Image gameBackground, gamePlayer, gameGround, gamePipe, gameMenu, menuButton, menuButtonSmall, homeButton, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu;
+    public Image icon, gameBackground, gamePlayer, gameGround, gamePipe, gameMenu, menuButton, menuButtonSmall, homeButton, la1Background, la1Player, la1Ground, la1Pipe, la1Menu, la2Background, la2Player, la2Ground, la2Pipe, la2Menu;
 
     public Visuals() {
         try {
@@ -26,6 +26,7 @@ public class Visuals {
         } catch (IOException | FontFormatException e) {
             System.exit(1);
         }
+
         try {
             minecraftSmallFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(20f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -33,6 +34,7 @@ public class Visuals {
         } catch (IOException | FontFormatException e) {
             System.exit(1);
         }
+
         try {
             minecraftScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File(".\\src\\main\\java\\game\\font\\minecraftRegular.otf")).deriveFont(50f);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -40,6 +42,8 @@ public class Visuals {
         } catch (IOException | FontFormatException e) {
             System.exit(1);
         }
+        icon = new ImageIcon(".\\src\\main\\java\\game\\img\\icon.png").getImage();
+
         la1Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\dirt.jpg").getImage();
         la1Background = new ImageIcon(".\\src\\main\\java\\game\\img\\back.png").getImage();
         la1Player = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
@@ -56,6 +60,7 @@ public class Visuals {
         menuButtonSmall = new ImageIcon(".\\src\\main\\java\\game\\img\\button-small.png").getImage();
         homeButton = new ImageIcon(".\\src\\main\\java\\game\\img\\button-home.png").getImage();
 
+
     }
 
     public void drawPipe(Graphics g, Rectangle pipe){
@@ -65,7 +70,7 @@ public class Visuals {
 
     public void drawGame(Graphics g, Rectangle player){
         g.drawImage(gameBackground, 0, 0, Constants.SIZE, Constants.MAPMAXHEIGHT, null);
-        g.drawImage(gameGround, 0, Constants.MAPMAXHEIGHT, 800, Constants.SIZE - Constants.MAPMAXHEIGHT, null);
+        g.drawImage(gameGround, 0, Constants.MAPMAXHEIGHT, Constants.SIZE, Constants.SIZE - Constants.MAPMAXHEIGHT, null);
         g.drawImage(gamePlayer, player.x, player.y, player.width, player.height, null);
 
     }

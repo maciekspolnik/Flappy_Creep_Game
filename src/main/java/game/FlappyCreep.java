@@ -18,8 +18,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
     public Random rand;
     public Music music = new Music();
     public Visuals visual = new Visuals();
-
-    JFrame jframe = new JFrame();
+    public JFrame jframe = new JFrame();
     Timer timer = new Timer(20, this);
 
 
@@ -28,7 +27,6 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
         initialize();
         visual.layout(layout);
         timer.start();
-        //music.playMusic();
     }
     public void initialize(){
         player = new Rectangle(Constants.SIZE / 2 - 10, Constants.SIZE / 2 - 10, Constants.PLAYERSIZE, Constants.PLAYERSIZE);
@@ -43,13 +41,14 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
         rand = new Random();
         jframe.add(renderer);
         jframe.setTitle("Flappy Creep");
+        jframe.setIconImage(visual.icon);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.setSize(Constants.SIZE, Constants.SIZE);
         jframe.addMouseListener(this);
         jframe.addKeyListener(this);
-        jframe.setResizable(true);
+        jframe.setResizable(false);
         jframe.setVisible(true);
-        music.playMusic();
+
 
 
     }
@@ -124,7 +123,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
             player.y += yMove;
 
             for (Rectangle pipe : pipes){
-                if (pipe.y == 0 && player.x + player.width / 2 > pipe.x + pipe.width / 2 -7 && player.x + player.width / 2 < pipe.x + pipe.width / 2 + 7 && !gameOver){
+                if (pipe.y == 0 && player.x + player.width / 2 > pipe.x + pipe.width / 2 - 7 && player.x + player.width / 2 < pipe.x + pipe.width / 2 + 7 && !gameOver){
                     score++;
                 }
 
@@ -183,28 +182,28 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
 
     @Override
     public void mouseClicked(MouseEvent e){
-        Point coords = e.getPoint();
-        if(gameOver && coords.x < 80 &&  coords.y < 90){
-            begining = true;
-            started = false;
-            gameOver = false;
-            initialize();
-        }
-        if(!begining) {
-            jump();
-        }
-        else if(coords.x < 650 && coords.x > 150 && coords.y > 430 && coords.y < 490) {
-            begining = false;
-        }
-
-        else if(coords.x < 390 && coords.x > 160 && coords.y > 530 && coords.y < 590) {
-            layout ^= 1;
-            visual.layout(layout);
+        if(e.getButton()==1) {
 
 
-        }
-        else if(coords.x < 650 && coords.x > 420 && coords.y > 540 && coords.y < 590) {
-            System.exit(0);
+            Point coords = e.getPoint();
+            if (gameOver && coords.x < 80 && coords.y < 90) {
+                begining = true;
+                started = false;
+                gameOver = false;
+                initialize();
+            }
+            if (!begining) {
+                jump();
+            } else if (coords.x < 650 && coords.x > 150 && coords.y > 430 && coords.y < 490) {
+                begining = false;
+            } else if (coords.x < 390 && coords.x > 160 && coords.y > 530 && coords.y < 590) {
+                layout ^= 1;
+                visual.layout(layout);
+
+
+            } else if (coords.x < 650 && coords.x > 420 && coords.y > 540 && coords.y < 590) {
+                System.exit(0);
+            }
         }
     }
 
@@ -240,7 +239,7 @@ public class FlappyCreep implements ActionListener, MouseListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e){
-        if(e.getKeyCode() == KeyEvent.VK_SPACE){
+        if(e.getKeyCode() == KeyEvent.VK_SPACE && !begining){
             jump();
         }
         if(e.getKeyCode() == KeyEvent.VK_L){

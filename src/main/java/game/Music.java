@@ -10,13 +10,18 @@ public class Music {
     public String musicLocation = ".\\src\\main\\java\\game\\music\\sound.wav";
     public Clip clip;
     public long clipTimePosition;
+    public File musicPath;
     public Music(){
         try{
-           File musicPath = new File(musicLocation);
+            musicPath = new File(musicLocation);
             if(musicPath.exists()){
                 AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
                 clip = AudioSystem.getClip();
                 clip.open(audioInput);
+                clip.setFramePosition(0);
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+
             }
             else{
                 System.out.println("Cant find file");
@@ -25,11 +30,6 @@ public class Music {
         catch(Exception e){
             System.out.println("Niepoprawny format pliku");
         }
-    }
-    public void playMusic(){
-        clip.setFramePosition(0);
-        clip.start();
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void pauseMusic(){
         clipTimePosition = clip.getMicrosecondPosition();
