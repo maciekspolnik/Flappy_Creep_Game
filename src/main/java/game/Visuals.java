@@ -42,7 +42,7 @@ public class Visuals {
         } catch (IOException | FontFormatException e) {
             System.exit(1);
         }
-        icon = new ImageIcon(".\\src\\main\\java\\game\\img\\icon.png").getImage();
+        icon = new ImageIcon(".\\src\\main\\java\\game\\img\\creeper.png").getImage();
 
         la1Ground = new ImageIcon(".\\src\\main\\java\\game\\img\\dirt.jpg").getImage();
         la1Background = new ImageIcon(".\\src\\main\\java\\game\\img\\back.png").getImage();
